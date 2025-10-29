@@ -1,0 +1,45 @@
+USERNAME = "anguinau"
+SERVER_NAME = "#{USERNAME}S"
+WORKER_NAME = "#{USERNAME}SW"
+
+SCRIPTS_DIR = "script"
+SERVER_SCRIPT = "#{SCRIPTS_DIR}/server.sh"
+WORKER_SCRIPT = "#{SCRIPTS_DIR}/worker.sh"
+
+SERVER_IP = "192.168.56.110"
+WORKER_IP = "192.168.56.111"
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "bento/debian-13.1"
+  config.vm.synced_folder "./volume", "/vagrant"
+
+  config.vm.define SERVER_NAME do |server|
+
+    server.vm.hostname = SERVER_NAME
+    server.vm.network "private_network", ip: SERVER_IP
+
+    server.vm.provider "virtualbox" do |vbox|
+
+      vbox.customize ["modifyvm", :id, "--name", SERVER_NAME]
+      vbox.memory = 2048
+      vbox.cpus = 2
+    end
+    script_args = [SERVER_IP]
+    server.vm.provision "shell", path: SERVER_SCRIPT, args: script_args
+  end
+  config.vm.define WORKER_NAME do |worker|
+
+    worker.vm.hostname = WORKER_NAME
+    worker.vm.network "private_network", ip: WORKER_IP
+
+    worker.vm.provider "virtualbox" do |vbox|
+
+      vbox.customize ["modifyvm", :id, "--name", WORKER_NAME]
+      vbox.memory = 1024
+      vbox.cpus = 1
+    end
+    script_args = [SERVER_IP, WORKER_IP]
+    worker.vm.provision "shell", path: WORKER_SCRIPT, args: script_args
+  end
+end
