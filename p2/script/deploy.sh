@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SERVER_IP="$1"
 INFRA_DIR='/k8s/web'
 
 #============================#
@@ -36,6 +37,21 @@ kubectl -n 'web' rollout status 'deploy/app3'
 echo 'Setting ingress...'
 
 kubectl apply -f "$INFRA_DIR/ingress.yaml"
+
+#============================#
+echo 'Waiting for services...'
+
+URL="http://$SERVER_IP"
+
+set +e
+while true; do
+
+    RES=$(curl -so '/dev/null' -w '%{http_code}' "$URL")
+
+    if [ "$RES" -eq '200' ]; then break; fi
+    sleep 1
+done
+set -e
 
 #============================#
 echo 'K3s infra deployment complete'

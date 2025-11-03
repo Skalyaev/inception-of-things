@@ -29,6 +29,7 @@ Vagrant.configure("2") do |config|
       args: [SERVER_IP]
 
     server.vm.provision "shell",
-      path: "#{SCRIPTS_DIR}/deploy.sh"
+      path: "#{SCRIPTS_DIR}/deploy.sh",
+      args: [SERVER_IP]
   end
 end

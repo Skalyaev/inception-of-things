@@ -19,8 +19,6 @@ spec:
       containers:
         - name: app2
           image: nginx:alpine
-          ports:
-            - containerPort: 80
           command: ["sh", "-c"]
           args:
             - |

@@ -6,7 +6,6 @@ metadata:
   namespace: web
 
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: app1
@@ -19,8 +18,6 @@ spec:
       containers:
         - name: app1
           image: nginx:alpine
-          ports:
-            - containerPort: 80
           command: ["sh", "-c"]
           args:
             - |
