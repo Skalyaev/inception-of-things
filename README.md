@@ -10,5 +10,5 @@
 
 - [x] Partie 1: K3s & Vagrant
 - [x] Partie 2: K3s & 3 simples applications
-- [ ] Partie 3: K3s & ArgoCD
+- [x] Partie 3: K3s & ArgoCD
 - [ ] Bonus: Gitlab integration

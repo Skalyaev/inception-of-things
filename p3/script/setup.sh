@@ -1,22 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+CLUSTER="$1"
+
 log() { echo -e "[setup] $*"; }
-
-if ! sudo -l &>'/dev/null'; then
-
-    log 'sudo privileges required'
-    exit 1
-fi
-
-#============================#
-log 'updating packages...'
-
-sudo apt-get update -y
 
 #============================#
 if ! command -v 'docker' &>'/dev/null'; then
 
+    sudo apt-get update -y
     sudo apt-get install -y 'ca-certificates'
     sudo apt-get install -y 'curl'
 
@@ -70,8 +62,6 @@ fi
 log 'k3d installed'
 
 #============================#
-CLUSTER='iot'
-
 if ! k3d cluster list | grep -q "^${CLUSTER}\s"; then
 
     PORT='8888:8888@loadbalancer'
