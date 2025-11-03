@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/Skalyaev/inception-of-things
-    path: ./p3/k8s/dev
+    path: p3/k8s/dev
 
   destination:
     server: https://kubernetes.default.svc
