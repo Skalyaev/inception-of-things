@@ -1,0 +1,83 @@
+/* ========================= */
+/* #1 Form                   */
+/* #2 Position               */
+/* #3 Margin & Padding       */
+/* #4 Self modifiers         */
+/* #5 Child modifiers        */
+/* #6 Text                   */
+/* #7 Animation              */
+/* ========================= */
+
+body {
+  /* #1 Form */
+  width: 100vw;
+  height: 100vh;
+  min-width: 320px;
+
+  /* #3 Margin & Padding */
+  margin: 0;
+
+  /* #4 Self modifiers */
+  background: #f6f8fb;
+
+  /* #6 Text */
+  font-family: system-ui;
+}
+
+main {
+  /* #1 Form */
+  width: 100%;
+  height: 100%;
+
+  /* #3 Margin & Padding */
+  padding: 5rem 2rem;
+
+  /* #5 Child modifiers */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.head {
+  /* #5 Child modifiers */
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.head img {
+  /* #1 Form */
+  width: 4rem;
+  aspect-ratio: 1 / 1;
+}
+
+.head h1 {
+  /* #3 Margin & Padding */
+  margin: 0;
+
+  /* #6 Text */
+  color: #0277bd;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.content {
+  /* #4 Self modifiers */
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.content p {
+  /* #3 Margin & Padding */
+  margin: 0;
+  padding: 1rem;
+}
+
+.content p + p {
+  /* #4 Self modifiers */
+  border-top: 1px solid #e0e0e0;
+}

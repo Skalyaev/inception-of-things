@@ -3,8 +3,6 @@ SERVER_NAME = "#{USERNAME}S"
 WORKER_NAME = "#{USERNAME}SW"
 
 SCRIPTS_DIR = "script"
-SERVER_SCRIPT = "#{SCRIPTS_DIR}/server.sh"
-WORKER_SCRIPT = "#{SCRIPTS_DIR}/worker.sh"
 
 SERVER_IP = "192.168.56.110"
 WORKER_IP = "192.168.56.111"
@@ -25,8 +23,9 @@ Vagrant.configure("2") do |config|
       vbox.memory = 2048
       vbox.cpus = 2
     end
-    script_args = [SERVER_IP]
-    server.vm.provision "shell", path: SERVER_SCRIPT, args: script_args
+    server.vm.provision "shell",
+      path: "#{SCRIPTS_DIR}/server.sh",
+      args: [SERVER_IP]
   end
   config.vm.define WORKER_NAME do |worker|
 
@@ -39,7 +38,8 @@ Vagrant.configure("2") do |config|
       vbox.memory = 1024
       vbox.cpus = 1
     end
-    script_args = [SERVER_IP, WORKER_IP]
-    worker.vm.provision "shell", path: WORKER_SCRIPT, args: script_args
+    worker.vm.provision "shell",
+      path: "#{SCRIPTS_DIR}/worker.sh",
+      args: [SERVER_IP, WORKER_IP]
   end
 end

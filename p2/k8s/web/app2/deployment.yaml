@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: app2
+  namespace: web
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app2
+
+  template:
+    metadata:
+      labels:
+        app: app2
+    spec:
+      containers:
+        - name: app2
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          command: ["sh", "-c"]
+          args:
+            - |
+              cp -r /usr/local/src/* /usr/share/nginx/html/.
+              NODE_NAME="$(uname -sr)"
+              sed -i \
+                -e "s|\${APP_NAME}|${APP_NAME}|g" \
+                -e "s|\${POD_NAME}|${POD_NAME}|g" \
+                -e "s|\${NODE_NAME}|${NODE_NAME}|g" \
+                /usr/share/nginx/html/index.html
+              exec nginx -g 'daemon off;'
+          env:
+            - name: APP_NAME
+              value: "app2"
+
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
+          volumeMounts:
+            - name: static
+              mountPath: /usr/local/src
+              readOnly: true
+
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+
+            - name: server-conf
+              mountPath: /etc/nginx/conf.d/server.conf
+              subPath: server.conf
+              readOnly: true
+
+      volumes:
+        - name: static
+          hostPath:
+            path: /k8s/web/static/html
+            type: Directory
+
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
+
+        - name: server-conf
+          configMap:
+            name: server-conf
