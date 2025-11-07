@@ -43,6 +43,14 @@ fi
 log 'docker ready'
 
 #============================# Git
+if ! command -v 'git' &>'/dev/null'; then
+
+    sudo apt-get update -y
+    sudo apt-get install -y 'git'
+fi
+log 'git ready'
+
+#============================# Kubectl
 if ! command -v 'kubectl' &>'/dev/null'; then
 
     VERSION="$(curl -fsSL 'https://dl.k8s.io/release/stable.txt')"
@@ -64,14 +72,26 @@ if ! command -v 'k3d' &>'/dev/null'; then
 fi
 log 'k3d ready'
 
-#============================# K3s cluster
+#============================# Helm
+if ! command -v 'helm' &>'/dev/null'; then
+
+    SRC='https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3'
+    curl -fsSL "$SRC" | bash
+fi
+log 'helm ready'
+
+#============================# K3d Cluster
 if ! k3d cluster list | grep -q "^$CLUSTER\s"; then
 
-    PORT='8888:8888@loadbalancer'
-    k3d cluster create "$CLUSTER" --agents '1' --port "$PORT"
+    PORT_WEB='8080:80@loadbalancer'
+    PORT_TLS='8443:443@loadbalancer'
+    PORT_APP='8888:8888@loadbalancer'
+
+    k3d cluster create "$CLUSTER" --agents '1' \
+        --port "$PORT_WEB" --port "$PORT_TLS" --port "$PORT_APP"
 fi
 kubectl wait --for='condition=ready' node --all
-log "cluster '$CLUSTER' ready"
+log "k3d cluster '$CLUSTER' ready"
 
 #============================# ArgoCD
 ARGOCD_DIR="$BASE_DIR/k8s/argocd"
@@ -90,6 +110,31 @@ kubectl -n 'argocd' rollout status 'statefulset/argocd-application-controller'
 
 kubectl apply -f "$ARGOCD_DIR/application.yaml"
 log 'argocd ready'
+
+#============================# GitLab
+GITLAB_DIR="$BASE_DIR/k8s/gitlab"
+
+if ! kubectl get ns 'gitlab' &>'/dev/null'; then
+
+    kubectl apply -f "$GITLAB_DIR/namespace.yaml"
+fi
+if ! helm -n 'gitlab' status 'gitlab' &>'/dev/null'; then
+
+    helm repo add gitlab 'https://charts.gitlab.io'
+    helm repo update
+
+    kubectl apply -f "$GITLAB_DIR/secret.yaml"
+
+    SRC="$GITLAB_DIR/values.yaml"
+    helm install 'gitlab' 'gitlab/gitlab' -n 'gitlab' -f "$SRC"
+fi
+if ! grep -q '^127.0.0.1\s\+gitlab\.local' '/etc/hosts'; then
+
+    echo '127.0.0.1 gitlab.local' | sudo tee -a '/etc/hosts' >/dev/null
+    log 'added gitlab.local to /etc/hosts'
+fi
+kubectl -n 'gitlab' rollout status 'deploy/gitlab-webservice-default'
+log 'gitlab ready'
 
 #============================#
 log 'done'

@@ -1,0 +1,21 @@
+global:
+  hosts:
+    domain: local
+  ingress:
+    tls:
+      secretName: gitlab-wildcard-tls
+
+gitlab:
+  toolbox:
+    backups:
+      objectStorage:
+        config:
+          secret: secret
+          key: key
+
+certmanager-issuer:
+  email: admin@gitlab.local
+
+gitlab-runner:
+  runners:
+    privileged: true

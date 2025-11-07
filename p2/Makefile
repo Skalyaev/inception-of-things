@@ -4,17 +4,17 @@ VOLUME_DIR=volume
 all: up
 
 up:
-	mkdir -p ${VOLUME_DIR}
-	vagrant up
+	@mkdir -p "$(VOLUME_DIR)"
+	@vagrant up
 
 ssh:
-	vagrant ssh ${USERNAME}S
+	@vagrant ssh "$(USERNAME)S"
 
 down:
-	vagrant halt
+	@vagrant halt
 
 clean:
-	vagrant destroy -f
+	@vagrant destroy -f
 
 re: clean up
 
