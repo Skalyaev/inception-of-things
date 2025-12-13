@@ -5,7 +5,7 @@ all: up
 
 up:
 	@mkdir -p "$(VOLUME_DIR)"
-	@vagrant up
+	@vagrant up --provider=virtualbox
 
 ssh:
 	@vagrant ssh "$(USERNAME)S"

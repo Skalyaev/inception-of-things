@@ -39,10 +39,11 @@ if ! command -v 'docker' &>'/dev/null'; then
     sudo apt-get install -y 'docker-compose-plugin'
 
     sudo usermod -aG 'docker' "$USER"
+    exec sg docker "$0 \"$@\""
 fi
 log 'docker ready'
 
-#============================# Git
+#============================# Kubectl
 if ! command -v 'kubectl' &>'/dev/null'; then
 
     VERSION="$(curl -fsSL 'https://dl.k8s.io/release/stable.txt')"
